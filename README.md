@@ -16,7 +16,7 @@ cd TaskManagementSystem.Frontend
 # 2. Copy environment variables
 cp .env.example .env
 
-# 3. Edit .env if needed (defaults point to http://localhost:5196)
+# 3. Edit .env to match your backend URL
 
 # 4. Install dependencies
 npm install
@@ -31,8 +31,8 @@ The app opens at **http://localhost:5173**.
 
 | Variable           | Default                  | Description                           |
 |--------------------|--------------------------|---------------------------------------|
-| `VITE_API_URL`     | `http://localhost:5196`  | Backend API base URL (no trailing `/`)|
-| `VITE_AUTH_ENABLED` | `true`                  | `true` = show login/register, protect routes, send Bearer token. `false` = skip auth entirely. |
+| `VITE_API_URL`     | `http://localhost:5196`  | Backend API base URL (no trailing `/`). Set in `.env`. |
+| `VITE_AUTH_ENABLED` | *(none)*               | Must be explicitly set to `"true"` to enable auth. Any other value (or missing) disables auth. |
 
 ## Project Structure
 

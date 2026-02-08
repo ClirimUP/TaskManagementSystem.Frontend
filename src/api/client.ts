@@ -4,6 +4,7 @@ import { API_URL, AUTH_ENABLED } from '../config';
 const client = axios.create({
   baseURL: API_URL,
   headers: { 'Content-Type': 'application/json' },
+  timeout: 15000,
 });
 
 client.interceptors.request.use((config) => {

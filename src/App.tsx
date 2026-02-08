@@ -13,7 +13,7 @@ function AppRoutes() {
 
   return (
     <Routes>
-      {/* Auth routes – only if auth is enabled */}
+      {/* Auth routes - only if auth is enabled */}
       {authEnabled && (
         <>
           <Route
@@ -27,7 +27,7 @@ function AppRoutes() {
         </>
       )}
 
-      {/* Task routes – protected when auth enabled */}
+      {/* Task routes - protected when auth enabled */}
       <Route element={<Layout />}>
         <Route
           path="/tasks"

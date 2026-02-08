@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer, useCallback, type ReactNode } from 'react';
+import { createContext, useContext, useReducer, useCallback, useRef, type ReactNode } from 'react';
 import type { TaskResponse, TaskStatusFilter, CreateTaskRequest, UpdateTaskRequest } from '../types';
 import * as tasksApi from '../api/tasksApi';
 import { parseApiError } from '../utils/errorParser';
@@ -28,17 +28,13 @@ type TasksAction =
   | { type: 'LOAD_TASKS_REQUEST' }
   | { type: 'LOAD_TASKS_SUCCESS'; payload: TaskResponse[] }
   | { type: 'LOAD_TASKS_FAILURE'; payload: string }
-  | { type: 'CREATE_TASK_REQUEST' }
-  | { type: 'CREATE_TASK_SUCCESS'; payload: TaskResponse }
-  | { type: 'CREATE_TASK_FAILURE'; payload: string }
-  | { type: 'UPDATE_TASK_REQUEST' }
-  | { type: 'UPDATE_TASK_SUCCESS'; payload: TaskResponse }
-  | { type: 'UPDATE_TASK_FAILURE'; payload: string }
+  | { type: 'SUBMIT_REQUEST' }
+  | { type: 'SUBMIT_SUCCESS' }
+  | { type: 'SUBMIT_FAILURE'; payload: string }
   | { type: 'DELETE_TASK_REQUEST' }
   | { type: 'DELETE_TASK_SUCCESS'; payload: string }
   | { type: 'DELETE_TASK_FAILURE'; payload: string }
   | { type: 'TOGGLE_COMPLETE_OPTIMISTIC'; payload: { id: string; isCompleted: boolean } }
-  | { type: 'TOGGLE_COMPLETE_SUCCESS'; payload: TaskResponse }
   | { type: 'TOGGLE_COMPLETE_ROLLBACK'; payload: { id: string; isCompleted: boolean } }
   | { type: 'CLEAR_ERROR' };
 
@@ -56,22 +52,11 @@ function tasksReducer(state: TasksState, action: TasksAction): TasksState {
     case 'LOAD_TASKS_FAILURE':
       return { ...state, listLoading: false, error: action.payload };
 
-    case 'CREATE_TASK_REQUEST':
+    case 'SUBMIT_REQUEST':
       return { ...state, submitLoading: true, error: null };
-    case 'CREATE_TASK_SUCCESS':
-      return { ...state, submitLoading: false, tasks: [action.payload, ...state.tasks] };
-    case 'CREATE_TASK_FAILURE':
-      return { ...state, submitLoading: false, error: action.payload };
-
-    case 'UPDATE_TASK_REQUEST':
-      return { ...state, submitLoading: true, error: null };
-    case 'UPDATE_TASK_SUCCESS':
-      return {
-        ...state,
-        submitLoading: false,
-        tasks: state.tasks.map((t) => (t.id === action.payload.id ? action.payload : t)),
-      };
-    case 'UPDATE_TASK_FAILURE':
+    case 'SUBMIT_SUCCESS':
+      return { ...state, submitLoading: false };
+    case 'SUBMIT_FAILURE':
       return { ...state, submitLoading: false, error: action.payload };
 
     case 'DELETE_TASK_REQUEST':
@@ -91,11 +76,6 @@ function tasksReducer(state: TasksState, action: TasksAction): TasksState {
         tasks: state.tasks.map((t) =>
           t.id === action.payload.id ? { ...t, isCompleted: action.payload.isCompleted } : t
         ),
-      };
-    case 'TOGGLE_COMPLETE_SUCCESS':
-      return {
-        ...state,
-        tasks: state.tasks.map((t) => (t.id === action.payload.id ? action.payload : t)),
       };
     case 'TOGGLE_COMPLETE_ROLLBACK':
       return {
@@ -132,6 +112,8 @@ const TasksContext = createContext<TasksContextValue | null>(null);
 
 export function TasksProvider({ children }: { children: ReactNode }) {
   const [state, dispatch] = useReducer(tasksReducer, initialState);
+  const filterRef = useRef(state.filter);
+  filterRef.current = state.filter;
 
   const setFilter = useCallback((filter: TaskStatusFilter) => {
     dispatch({ type: 'SET_FILTER', payload: filter });
@@ -147,26 +129,35 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const createTask = useCallback(async (request: CreateTaskRequest): Promise<boolean> => {
-    dispatch({ type: 'CREATE_TASK_REQUEST' });
+  const refetch = useCallback(async () => {
     try {
-      const task = await tasksApi.createTask(request);
-      dispatch({ type: 'CREATE_TASK_SUCCESS', payload: task });
+      const tasks = await tasksApi.getTasks(filterRef.current);
+      dispatch({ type: 'LOAD_TASKS_SUCCESS', payload: tasks });
+    } catch {
+      /* silent — list will refresh on next navigation */
+    }
+  }, []);
+
+  const createTask = useCallback(async (request: CreateTaskRequest): Promise<boolean> => {
+    dispatch({ type: 'SUBMIT_REQUEST' });
+    try {
+      await tasksApi.createTask(request);
+      dispatch({ type: 'SUBMIT_SUCCESS' });
       return true;
     } catch (err) {
-      dispatch({ type: 'CREATE_TASK_FAILURE', payload: parseApiError(err) });
+      dispatch({ type: 'SUBMIT_FAILURE', payload: parseApiError(err) });
       return false;
     }
   }, []);
 
   const updateTask = useCallback(async (id: string, request: UpdateTaskRequest): Promise<boolean> => {
-    dispatch({ type: 'UPDATE_TASK_REQUEST' });
+    dispatch({ type: 'SUBMIT_REQUEST' });
     try {
-      const task = await tasksApi.updateTask(id, request);
-      dispatch({ type: 'UPDATE_TASK_SUCCESS', payload: task });
+      await tasksApi.updateTask(id, request);
+      dispatch({ type: 'SUBMIT_SUCCESS' });
       return true;
     } catch (err) {
-      dispatch({ type: 'UPDATE_TASK_FAILURE', payload: parseApiError(err) });
+      dispatch({ type: 'SUBMIT_FAILURE', payload: parseApiError(err) });
       return false;
     }
   }, []);
@@ -188,10 +179,10 @@ export function TasksProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'TOGGLE_COMPLETE_OPTIMISTIC', payload: { id, isCompleted } });
 
     tasksApi.toggleComplete(id, { isCompleted }).then(
-      (task) => dispatch({ type: 'TOGGLE_COMPLETE_SUCCESS', payload: task }),
+      () => refetch(),
       () => dispatch({ type: 'TOGGLE_COMPLETE_ROLLBACK', payload: { id, isCompleted: previous } })
     );
-  }, []);
+  }, [refetch]);
 
   const clearError = useCallback(() => {
     dispatch({ type: 'CLEAR_ERROR' });

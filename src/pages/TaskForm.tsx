@@ -86,7 +86,7 @@ export default function TaskForm() {
       title: title.trim(),
       description: description.trim() || null,
       priority: priority as Priority,
-      dueDate: dueDate ? new Date(dueDate).toISOString() : null,
+      dueDate: dueDate ? `${dueDate}T00:00:00.000Z` : null,
     };
 
     let success: boolean;
