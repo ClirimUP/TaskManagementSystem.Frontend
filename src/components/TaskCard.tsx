@@ -11,8 +11,14 @@ interface Props {
 export default function TaskCard({ task, onToggle, onDelete }: Props) {
   const navigate = useNavigate();
 
-  const isOverdue =
-    task.dueDate && !task.isCompleted && new Date(task.dueDate) < new Date();
+  const isOverdue = (() => {
+    if (!task.dueDate || task.isCompleted) return false;
+    const due = new Date(task.dueDate);
+    const today = new Date();
+    due.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+    return due < today;
+  })();
 
   const formatDate = (iso: string) =>
     new Date(iso).toLocaleDateString(undefined, {

@@ -110,3 +110,13 @@
   padding: 3rem 1rem;
   color: #6b7280;
 }
+
+.form__btn--full-width {
+  width: 100%;
+}
+
+.form__hint {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 0.2rem;
+}

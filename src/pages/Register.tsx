@@ -72,7 +72,7 @@ export default function Register() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.2rem' }}>
+          <div className={formStyles.form__hint}>
             Minimum 8 characters
           </div>
         </div>
@@ -92,8 +92,7 @@ export default function Register() {
 
         <button
           type="submit"
-          className={`${formStyles.form__btn} ${formStyles['form__btn--primary']}`}
-          style={{ width: '100%' }}
+          className={`${formStyles.form__btn} ${formStyles['form__btn--primary']} ${formStyles['form__btn--full-width']}`}
           disabled={loading}
         >
           {loading ? 'Creating account...' : 'Create Account'}

@@ -67,8 +67,7 @@ export default function Login() {
 
         <button
           type="submit"
-          className={`${formStyles.form__btn} ${formStyles['form__btn--primary']}`}
-          style={{ width: '100%' }}
+          className={`${formStyles.form__btn} ${formStyles['form__btn--primary']} ${formStyles['form__btn--full-width']}`}
           disabled={loading}
         >
           {loading ? 'Signing in...' : 'Sign In'}

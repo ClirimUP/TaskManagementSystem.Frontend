@@ -145,7 +145,7 @@ export default function TaskForm() {
           {errors.description && (
             <div className={styles['form__error-text']}>{errors.description}</div>
           )}
-          <div style={{ fontSize: '0.75rem', color: '#9ca3af', marginTop: '0.2rem' }}>
+          <div className={styles.form__hint}>
             {description.length} / 2000
           </div>
         </div>
