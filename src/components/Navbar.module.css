@@ -1,0 +1,53 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 56px;
+  background: #4f46e5;
+  color: #fff;
+}
+
+.navbar__brand {
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+  color: #fff;
+}
+
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.navbar__email {
+  font-size: 0.85rem;
+  opacity: 0.85;
+}
+
+.navbar__btn {
+  padding: 0.4rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.navbar__btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.navbar__btn--primary {
+  background: #fff;
+  color: #4f46e5;
+  border-color: #fff;
+  font-weight: 600;
+}
+
+.navbar__btn--primary:hover {
+  background: #e0e7ff;
+}

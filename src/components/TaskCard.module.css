@@ -1,0 +1,131 @@
+.card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  transition: box-shadow 0.15s;
+}
+
+.card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.card--completed {
+  opacity: 0.65;
+}
+
+.card__checkbox {
+  margin-top: 0.2rem;
+  width: 18px;
+  height: 18px;
+  accent-color: #4f46e5;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.card__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.card__title {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: #111827;
+}
+
+.card--completed .card__title {
+  text-decoration: line-through;
+  color: #6b7280;
+}
+
+.card__description {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
+  word-break: break-word;
+}
+
+.card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge--low {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge--medium {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.badge--high {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.card__due--overdue {
+  color: #dc2626;
+  font-weight: 500;
+}
+
+.card__actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+
+.card__action-btn {
+  padding: 0.35rem 0.7rem;
+  border: 1px solid #d1d5db;
+  border-radius: 5px;
+  background: #fff;
+  font-size: 0.78rem;
+  cursor: pointer;
+  color: #374151;
+  transition: background 0.15s;
+}
+
+.card__action-btn:hover {
+  background: #f3f4f6;
+}
+
+.card__action-btn--delete {
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.card__action-btn--delete:hover {
+  background: #fef2f2;
+}
+
+@media (max-width: 600px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .card__actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
